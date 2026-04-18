@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, Eye, Save, Loader2, Menu, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Eye, Save, Loader2, Menu, X, CheckCircle } from 'lucide-react'
 import { ResumeProvider, useResume } from '../context/ResumeContext'
 import { useAuth } from '../context/AuthContext'
 import { AuthModal } from '../components/auth'
@@ -112,16 +112,19 @@ function BuilderContent() {
             <div className="flex items-center gap-4">
               <Link
                 to="/"
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all"
               >
-                <ArrowLeft className="h-4 w-4" />
+                <ArrowLeft className="h-5 w-5" />
                 <span>Back</span>
               </Link>
               <div className="h-6 w-px bg-gray-200" />
-              <span className="font-semibold text-gray-900">Resume Builder</span>
+              <span className="font-bold text-gray-900 text-lg">Resume Builder</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Link to="/preview" className="btn btn-outline btn-sm">
+            <div className="flex items-center gap-3">
+              <Link 
+                to="/preview" 
+                className="btn btn-outline btn-sm px-4 py-2.5"
+              >
                 <Eye className="h-4 w-4" />
                 <span>Preview</span>
               </Link>
@@ -129,18 +132,21 @@ function BuilderContent() {
                 type="button"
                 onClick={handleSave}
                 disabled={isSaving}
-                className="btn btn-primary btn-sm"
+                className="btn btn-primary btn-sm px-5 py-2.5"
               >
                 {isSaving ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : saveSuccess ? (
-                  'Saved!'
+                  <>
+                    <CheckCircle className="h-4 w-4" />
+                    <span>Saved!</span>
+                  </>
                 ) : (
-                  <Save className="h-4 w-4" />
+                  <>
+                    <Save className="h-4 w-4" />
+                    <span>Save</span>
+                  </>
                 )}
-                <span>
-                  {isSaving ? 'Saving...' : saveSuccess ? 'Saved!' : 'Save'}
-                </span>
               </button>
             </div>
           </div>
@@ -202,7 +208,7 @@ function BuilderContent() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="rounded-xl border border-gray-200 bg-white p-4 lg:p-6 shadow-sm overflow-x-hidden"
+              className="rounded-2xl border border-gray-200/60 bg-white/80 backdrop-blur-sm p-5 lg:p-8 shadow-xl shadow-gray-200/40 overflow-x-hidden"
             >
               {renderStep()}
             </motion.div>
@@ -210,26 +216,35 @@ function BuilderContent() {
         </div>
 
         {/* Navigation Buttons */}
-        <div className="mt-6 lg:mt-8 flex flex-col sm:flex-row gap-3 justify-between">
+        <div className="mt-6 lg:mt-8 flex flex-col sm:flex-row gap-3 sm:justify-between sm:items-center">
           <button
             type="button"
             onClick={prevStep}
             disabled={!canGoBack}
-            className="btn btn-secondary order-2 sm:order-1"
+            className={`btn btn-secondary order-2 sm:order-1 px-5 py-3 text-base ${
+              !canGoBack ? 'opacity-40 cursor-not-allowed' : ''
+            }`}
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-5 w-5" />
             <span>Previous</span>
           </button>
 
           {canProceed ? (
-            <button type="button" onClick={nextStep} className="btn btn-primary order-1 sm:order-2">
-              <span>Next</span>
-              <ArrowRight className="h-4 w-4" />
+            <button 
+              type="button" 
+              onClick={nextStep} 
+              className="btn btn-primary order-1 sm:order-2 px-6 py-3 text-base"
+            >
+              <span>Continue</span>
+              <ArrowRight className="h-5 w-5" />
             </button>
           ) : (
-            <Link to="/preview" className="btn btn-primary order-1 sm:order-2">
+            <Link 
+              to="/preview" 
+              className="btn btn-primary order-1 sm:order-2 px-6 py-3 text-base"
+            >
               <span>Review Resume</span>
-              <Eye className="h-4 w-4" />
+              <Eye className="h-5 w-5" />
             </Link>
           )}
         </div>
