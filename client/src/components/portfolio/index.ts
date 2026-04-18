@@ -1,0 +1,5 @@
+export { default as PortfolioHero } from './PortfolioHero'
+export { default as PortfolioSkills } from './PortfolioSkills'
+export { default as PortfolioProjects } from './PortfolioProjects'
+export { default as PortfolioExperience } from './PortfolioExperience'
+export { default as PortfolioContact } from './PortfolioContact'
