@@ -1,7 +1,12 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+<<<<<<< HEAD
 import { ArrowLeft, ArrowRight, Eye, Save, Loader2, Menu, X, CheckCircle } from 'lucide-react'
 import { ResumeProvider, useResume } from '../context/ResumeContext'
+=======
+import { ArrowLeft, ArrowRight, Eye, Save, Loader2, Menu, X } from 'lucide-react'
+import { useResume } from '../context/ResumeContext'
+>>>>>>> master
 import { useAuth } from '../context/AuthContext'
 import { AuthModal } from '../components/auth'
 import {
@@ -261,9 +266,5 @@ function BuilderContent() {
 }
 
 export default function Builder() {
-  return (
-    <ResumeProvider>
-      <BuilderContent />
-    </ResumeProvider>
-  )
+  return <BuilderContent />
 }

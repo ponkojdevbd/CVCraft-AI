@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
-import { ResumeProvider, useResume } from '../context/ResumeContext'
+import { useResume } from '../context/ResumeContext'
 import {
   PortfolioHero,
   PortfolioSkills,
@@ -49,9 +49,5 @@ function PortfolioContent() {
 }
 
 export default function Portfolio() {
-  return (
-    <ResumeProvider>
-      <PortfolioContent />
-    </ResumeProvider>
-  )
+  return <PortfolioContent />
 }
