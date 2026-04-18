@@ -1,7 +1,11 @@
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, Download, Loader2, CheckCircle, Save } from 'lucide-react'
+<<<<<<< HEAD
+import { ResumeProvider, useResume } from '../context/ResumeContext'
+=======
 import { useResume } from '../context/ResumeContext'
+>>>>>>> master
 import {
   TemplateSelector,
   TemplateClassic,
