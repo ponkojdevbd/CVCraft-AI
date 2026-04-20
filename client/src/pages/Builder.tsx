@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, Eye, Save, Loader2, Menu, X, CheckCircle } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Eye, Save, Loader2, Menu, X, CheckCircle, LogIn, UserPlus } from 'lucide-react'
 import { useResume } from '../context/ResumeContext'
 import { useAuth } from '../context/AuthContext'
 import { AuthModal } from '../components/auth'
+import { useToast } from '../components/ui/Toast'
+import ProfileDropdown from '../components/ui/ProfileDropdown'
 import {
   ProgressStepper,
   StepPersonalInfo,
@@ -25,6 +27,7 @@ function BuilderContent() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { resume } = useResume()
   const { user } = useAuth()
+  const { showToast } = useToast()
 
   const canProceed = currentStep < FORM_STEPS.length - 1
   const canGoBack = currentStep > 0
@@ -47,9 +50,11 @@ function BuilderContent() {
     try {
       await resumeApi.save(resume)
       setSaveSuccess(true)
+      showToast('Your changes saved successfully', 'success')
       setTimeout(() => setSaveSuccess(false), 3000)
     } catch (error) {
       console.error('Save failed:', error)
+      showToast('Failed to save changes', 'error')
     } finally {
       setIsSaving(false)
     }
@@ -128,26 +133,50 @@ function BuilderContent() {
                 <Eye className="h-4 w-4" />
                 <span>Preview</span>
               </Link>
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={isSaving}
-                className="btn btn-primary btn-sm px-5 py-2.5"
-              >
-                {isSaving ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : saveSuccess ? (
-                  <>
-                    <CheckCircle className="h-4 w-4" />
-                    <span>Saved!</span>
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4" />
-                    <span>Save</span>
-                  </>
-                )}
-              </button>
+              {user ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="btn btn-primary btn-sm px-5 py-2.5"
+                  >
+                    {isSaving ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : saveSuccess ? (
+                      <>
+                        <CheckCircle className="h-4 w-4" />
+                        <span>Saved!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-4 w-4" />
+                        <span>Save</span>
+                      </>
+                    )}
+                  </button>
+                  <ProfileDropdown resumePhotoUrl={resume.personalInfo.photo} />
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setShowAuthModal(true)}
+                    className="btn btn-outline btn-sm px-4 py-2.5"
+                  >
+                    <LogIn className="h-4 w-4" />
+                    <span>LogIn</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowAuthModal(true)}
+                    className="btn btn-primary btn-sm px-4 py-2.5"
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    <span>SignUp</span>
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
@@ -171,18 +200,45 @@ function BuilderContent() {
                   <Eye className="h-4 w-4" />
                   <span>Preview</span>
                 </Link>
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleSave()
-                    setMobileMenuOpen(false)
-                  }}
-                  disabled={isSaving}
-                  className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-50"
-                >
-                  <Save className="h-4 w-4" />
-                  <span>{isSaving ? 'Saving...' : 'Save Resume'}</span>
-                </button>
+                {user ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleSave()
+                      setMobileMenuOpen(false)
+                    }}
+                    disabled={isSaving}
+                    className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-50"
+                  >
+                    <Save className="h-4 w-4" />
+                    <span>{isSaving ? 'Saving...' : 'Save Resume'}</span>
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowAuthModal(true)
+                        setMobileMenuOpen(false)
+                      }}
+                      className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-50"
+                    >
+                      <LogIn className="h-4 w-4" />
+                      <span>LogIn</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowAuthModal(true)
+                        setMobileMenuOpen(false)
+                      }}
+                      className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-50"
+                    >
+                      <UserPlus className="h-4 w-4" />
+                      <span>SignUp</span>
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           )}
