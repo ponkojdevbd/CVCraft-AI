@@ -1,6 +1,12 @@
 import OpenAI from 'openai'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+let openai: OpenAI | null = null
+
+function getOpenAI(): OpenAI | null {
+  if (!process.env.OPENAI_API_KEY) return null
+  if (!openai) openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  return openai
+}
 
 const mockSuggestions: Record<string, string[]> = {
   summary: [
@@ -21,14 +27,14 @@ const mockSuggestions: Record<string, string[]> = {
 }
 
 export async function getAISuggestions(text: string, type: string): Promise<string[]> {
-  const useMock = !process.env.OPENAI_API_KEY
+  const client = getOpenAI()
 
-  if (useMock) {
+  if (!client) {
     return mockSuggestions[type] || mockSuggestions.summary
   }
 
   try {
-    const completion = await openai.chat.completions.create({
+    const completion = await client.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
         {
