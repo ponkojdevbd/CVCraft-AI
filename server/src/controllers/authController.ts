@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt, { type SignOptions } from 'jsonwebtoken'
-import { prisma } from '../config/prisma'
+import { User } from '../models/User'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
 
@@ -25,7 +25,7 @@ export async function register(req: Request, res: Response): Promise<void> {
       return
     }
 
-    const existingUser = await prisma.user.findUnique({ where: { email } })
+    const existingUser = await User.findOne({ email })
     if (existingUser) {
       res.status(400).json({ error: 'Email already registered' })
       return
@@ -33,15 +33,17 @@ export async function register(req: Request, res: Response): Promise<void> {
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    const user = await prisma.user.create({
-      data: { name, email, password: hashedPassword },
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
     })
 
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' } as SignOptions)
+    const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' } as SignOptions)
 
     res.status(201).json({
       token,
-      user: { id: user.id, name: user.name, email: user.email },
+      user: { id: user._id, name: user.name, email: user.email },
     })
   } catch (error) {
     console.error('Register error:', error)
@@ -58,7 +60,7 @@ export async function login(req: Request, res: Response): Promise<void> {
       return
     }
 
-    const user = await prisma.user.findUnique({ where: { email } })
+    const user = await User.findOne({ email })
     if (!user) {
       res.status(401).json({ error: 'Invalid credentials' })
       return
@@ -70,11 +72,11 @@ export async function login(req: Request, res: Response): Promise<void> {
       return
     }
 
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' } as SignOptions)
+    const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' } as SignOptions)
 
     res.json({
       token,
-      user: { id: user.id, name: user.name, email: user.email },
+      user: { id: user._id, name: user.name, email: user.email },
     })
   } catch (error) {
     console.error('Login error:', error)
